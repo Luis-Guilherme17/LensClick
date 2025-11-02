@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="profile.title">Perfil | LensClick</title>
+  <link rel="stylesheet" href="index.html">
+  <style>
+    :root{
+      --bg-1: #0f1220;
+      --card-bg: rgba(15,18,32,0.85);
+      --accent-1: #a35bff;
+      --accent-2: #5bb3ff;
+      --muted: #9aa0b8;
+      --text: #f0f3ff;
+    }
+    html,body{height:100%;}
+    body { margin:0; font-family: Poppins, Arial, sans-serif; background: radial-gradient(1200px 800px at 50% 10%, #6a39f0 0%, #4b2a9f 40%, #20123a 100%) fixed; color:var(--text); -webkit-font-smoothing:antialiased; }
+    .container { max-width:980px; margin:80px auto 36px; padding:20px; }
+    .card { background: linear-gradient(180deg, rgba(15,18,32,0.9), rgba(12,13,22,0.72)); border-radius:18px; padding:28px; box-shadow:0 12px 40px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,0.04); }
+    h1 { margin:0 0 18px 0; font-size:28px; text-align:center; }
+
+    /* layout */
+    .top-row{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;margin-top:15px}
+    .avatar-wrap{width:140px;display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:65px}
+    .avatar{
+      width:140px;
+      height:140px;
+      border-radius:50%;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.06);
+      background:#0d0e15;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:none;
+      border-radius:50%;
+      background:none;
+      position:absolute;
+      z-index:2;
+    }
+    .no-image-message{
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 0 10px;
+      max-width:85%;
+      z-index:1;
+      margin:0 auto;
+      pointer-events:none;
+    }
+    .avatar .upload-label{
+      position:absolute;
+      right:10px;
+      bottom:10px;
+      background:#ffffff;
+      width:26px;
+      height:26px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#000000;
+      cursor:pointer;
+      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      z-index:3;
+      border:none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .avatar .upload-label:hover {
+      transform: scale(1.05);
+      box-shadow:0 3px 8px rgba(0,0,0,0.25);
+    }
+    .avatar .upload-label i {
+      font-size: 12px;
+    }
+    .visually-hidden{position:absolute!important;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden}
+
+    /* form */
+    .profile-details{flex:1;min-width:260px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+    .form-grid .full{grid-column:1/-1}
+
+    .label{font-weight:600;color:var(--muted);font-size:0.95rem;margin-bottom:8px}
+    .form-control{width:100%;max-width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);color:var(--text);font-family:inherit;font-size:16px;line-height:20px;height:44px}
+    .form-control:focus{outline:none;box-shadow:0 0 0 3px rgba(99,102,241,0.08);border-color:var(--accent-1)}
+
+    /* button styles */
+    .actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;margin-top:16px}
+    .btn{padding:12px 16px;border-radius:12px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));border:none;color:#061018;font-weight:700;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+    .btn.danger{background:#e35b5b;color:#fff}
+    .btn.outline{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--text)}
+
+    @media(max-width:760px){
+      .form-grid{grid-template-columns:1fr}
+      .avatar-wrap{width:120px}
+      .avatar{width:120px;height:120px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1 data-i18n="profile.title">Perfil</h1>
+
+      <form id="profileForm">
+        <div class="top-row">
+          <div class="avatar-wrap">
+            <div class="avatar">
+              <div class="no-image-message" id="noImageMessage" data-i18n="profile.noImage">Adicione uma imagem pro seu perfil</div>
+              <img src="" alt="avatar" />
+              <label for="profilePic" class="upload-label" data-i18n-title="profile.addPhoto" title="Adicionar foto" aria-label="Adicionar foto">
+                <i class="fas fa-camera"></i>
+                <input type="file" id="profilePic" class="visually-hidden" accept="image/*">
+              </label>
+            </div>
+          </div>
+
+          <div class="profile-details">
+            <div>
+              <div class="label" data-i18n="profile.nameLabel">Nome</div>
+              <input id="profileNameInput" class="form-control" type="text" required />
+            </div>
+
+            <div class="form-grid">
+              <div>
+                <div class="label" data-i18n="profile.emailLabel">E-mail</div>
+                <input id="profileEmail" class="form-control" type="email" disabled />
+              </div>
+
+              <div>
+                <div class="label" data-i18n="profile.phoneLabel">Telefone</div>
+                <input id="profilePhone" class="form-control" type="tel" />
+              </div>
+
+              <div>
+                <div class="label" data-i18n="profile.roleLabel">Você é</div>
+                <select id="profileRole" class="form-control" data-custom="true">
+                  <option value="client" data-i18n="profile.role.client">Cliente</option>
+                  <option value="photographer" data-i18n="profile.role.photographer">Fotógrafo</option>
+                </select>
+              </div>
+
+              <div>
+                <div class="label" data-i18n="profile.ageLabel">Idade</div>
+                <input id="profileAge" class="form-control" type="number" min="0" max="120" />
+              </div>
+
+              <div class="full">
+                <div class="label" data-i18n="profile.genderLabel">Gênero</div>
+                <select id="profileGender" class="form-control" data-custom="true">
+                  <option value="male" data-i18n="profile.gender.male">Masculino</option>
+                  <option value="female" data-i18n="profile.gender.female">Feminino</option>
+                  <option value="other" data-i18n="profile.gender.other">Outro</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn outline" onclick="window.location.href='index.html'" data-i18n="profile.backToSite">Voltar ao site</button>
+          <button id="saveProfile" type="button" class="btn" data-i18n="profile.save">Salvar</button>
+          <button id="logoutBtn" type="button" class="btn danger" data-i18n="profile.logout">Sair</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="lang.js"></script>
+  <script>
+    // Check user from localStorage and populate the profile
+    (function(){
+      const currentUser = localStorage.getItem('currentUser');
+      if(!currentUser){
+        // no logged in user, redirect to login
+        setTimeout(()=>{ window.location.href = 'login.html'; }, 400);
+        return;
+      }
+      let user = {};
+      try { 
+        user = JSON.parse(currentUser);
+        // Atualizar a lista de usuários quando houver mudanças
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const userIndex = users.findIndex(u => u.email === user.email);
+      } catch(e){ 
+        console.error('Erro ao carregar usuário:', e);
+        setTimeout(()=>{ window.location.href = 'login.html'; }, 400);
+        return;
+      }
+
+      // elements
+      const picPreview = document.querySelector('.avatar img');
+      const picInput = document.getElementById('profilePic');
+      const nameInput = document.getElementById('profileNameInput');
+      const emailInput = document.getElementById('profileEmail');
+      const phoneInput = document.getElementById('profilePhone');
+      const roleInput = document.getElementById('profileRole');
+      const ageInput = document.getElementById('profileAge');
+      const genderInput = document.getElementById('profileGender');
+      const saveBtn = document.getElementById('saveProfile');
+      const logoutBtnEl = document.getElementById('logoutBtn');
+
+      // populate
+      nameInput.value = user.name || '';
+      emailInput.value = user.email || '';
+      phoneInput.value = user.phone || '';
+      roleInput.value = user.role || 'client';
+      ageInput.value = (user.age !== undefined) ? user.age : '';
+      genderInput.value = user.gender || 'other';
+      if(user.profilePic){ 
+        picPreview.src = user.profilePic;
+        picPreview.style.display = 'block';
+        document.getElementById('noImageMessage').style.display = 'none';
+      } else { 
+        picPreview.src = '';
+        picPreview.style.display = 'none';
+        document.getElementById('noImageMessage').style.display = 'block';
+      }
+
+      // handle image upload -> read as data URL and preview
+      picInput.addEventListener('change', function(ev){
+        const f = ev.target.files && ev.target.files[0];
+        if(!f) return;
+        const reader = new FileReader();
+        reader.onload = function(e){
+          picPreview.src = e.target.result;
+          picPreview.style.display = 'block';
+          picPreview.style.opacity = '1';
+          document.getElementById('noImageMessage').style.display = 'none';
+          user.profilePic = e.target.result;
+        };
+        reader.readAsDataURL(f);
+      });
+
+      // save handler
+      saveBtn.addEventListener('click', function(){
+        user.name = nameInput.value.trim();
+        user.email = emailInput.value.trim();
+        user.phone = phoneInput.value.trim();
+        user.role = roleInput.value;
+        user.age = ageInput.value ? Number(ageInput.value) : '';
+        user.gender = genderInput.value;
+        // profilePic already set when selected
+
+        try { 
+          // Atualizar usuário atual
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          
+          // Atualizar na lista de usuários
+          const users = JSON.parse(localStorage.getItem('users')) || [];
+          const userIndex = users.findIndex(u => u.email === user.email);
+          if(userIndex !== -1){
+            users[userIndex] = {...users[userIndex], ...user};
+          }
+          localStorage.setItem('users', JSON.stringify(users));
+          
+          alert('Perfil atualizado com sucesso!');
+        } catch(e){
+          console.error('Erro ao salvar:', e);
+          alert('Erro ao salvar o perfil. Tente novamente.');
+        }
+      });
+
+      // logout
+      logoutBtnEl.addEventListener('click', ()=>{
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+      });
+    })();
+  </script>
+</body>
+</html>
